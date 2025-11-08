@@ -86,10 +86,30 @@ export default function Home() {
           )}
 
           <CollapsibleSection title="ファイルの検証" bgColor="bg-blue-50" borderColor="border-blue-200" textColor="text-blue-800">
-            <ol className="text-lg text-blue-700 space-y-2 list-decimal list-inside">
-              <li>フロントエンドは拡張子をチェック (image/jpeg, image/png)</li>
-              <li>サーバーはContent-Typeを検証 (image/jpeg, image/png)</li>
-            </ol>
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-lg font-semibold text-blue-800 mb-2">1. フロントエンド: 拡張子チェック</h4>
+                <pre className="text-sm text-blue-700 overflow-x-auto bg-blue-100 p-4 rounded">
+                  <code>{`<input
+  type="file"
+  accept=".jpg,.jpeg,.png"
+/>`}</code>
+                </pre>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold text-blue-800 mb-2">2. サーバーサイド: Content-Type検証</h4>
+                <pre className="text-sm text-blue-700 overflow-x-auto bg-blue-100 p-4 rounded">
+                  <code>{`const contentType = file.type;
+
+if (!['image/jpeg', 'image/png'].includes(contentType)) {
+  return NextResponse.json(
+    { error: '画像ファイルのみアップロード可能です' },
+    { status: 400 }
+  );
+}`}</code>
+                </pre>
+              </div>
+            </div>
           </CollapsibleSection>
 
           <CollapsibleSection title="攻撃スクリプト" bgColor="bg-yellow-50" borderColor="border-yellow-200" textColor="text-yellow-800">
