@@ -4,6 +4,28 @@ import { useState, useEffect } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+function CodeBlock({ code, language }: { code: string; language: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="relative">
+      <button
+        onClick={handleCopy}
+        className="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10"
+      >
+        {copied ? '✓ コピー済み' : 'コピー'}
+      </button>
+      <SyntaxHighlighter language={language} style={vscDarkPlus} customStyle={{ fontSize: '0.875rem', borderRadius: '0.5rem' }}>
+        {code}
+      </SyntaxHighlighter>
+    </div>
+  );
+}
+
 function CollapsibleSection({ title, children, bgColor, borderColor, textColor }: { title: string; children: React.ReactNode; bgColor: string; borderColor: string; textColor: string }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -56,7 +78,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-orange-50">
-      <header className="relative text-white py-12 shadow-lg overflow-hidden">
+      <header className="relative text-white py-20 shadow-lg overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'url(/Header.jpg)' }}
@@ -125,32 +147,27 @@ export default function Home() {
             <div className="space-y-4">
               <div>
                 <h4 className="text-lg font-semibold text-blue-800 mb-2">1. フロントエンド: 拡張子チェック</h4>
-                <SyntaxHighlighter language="html" style={vscDarkPlus} customStyle={{ fontSize: '0.875rem', borderRadius: '0.5rem' }}>
-{`<input
+                <CodeBlock language="html" code={`<input
   type="file"
   accept=".jpg,.jpeg,.png"
-/>`}
-                </SyntaxHighlighter>
+/>`} />
               </div>
               <div>
                 <h4 className="text-lg font-semibold text-blue-800 mb-2">2. サーバーサイド: Content-Type検証</h4>
-                <SyntaxHighlighter language="typescript" style={vscDarkPlus} customStyle={{ fontSize: '0.875rem', borderRadius: '0.5rem' }}>
-{`const contentType = file.type;
+                <CodeBlock language="typescript" code={`const contentType = file.type;
 
 if (!['image/jpeg', 'image/png'].includes(contentType)) {
   return NextResponse.json(
     { error: '画像ファイルのみアップロード可能です' },
     { status: 400 }
   );
-}`}
-                </SyntaxHighlighter>
+}`} />
               </div>
             </div>
           </CollapsibleSection>
 
             <CollapsibleSection title="攻撃スクリプト" bgColor="bg-yellow-50" borderColor="border-yellow-300" textColor="text-yellow-800">
-            <SyntaxHighlighter language="javascript" style={vscDarkPlus} customStyle={{ fontSize: '0.875rem', borderRadius: '0.5rem' }}>
-{`// HTMLファイルを作成
+            <CodeBlock language="javascript" code={`// HTMLファイルを作成
 const html = '<!DOCTYPE html><html><body><h1>XSS</h1><script>alert("Attack!")</script></body></html>';
 
 // Content-Typeを 'image/jpeg' に偽装
@@ -162,8 +179,7 @@ const dt = new DataTransfer();
 dt.items.add(file);
 
 const input = document.querySelector('input[type="file"]');
-input.files = dt.files;`}
-            </SyntaxHighlighter>
+input.files = dt.files;`} />
             </CollapsibleSection>
           </main>
         </div>
