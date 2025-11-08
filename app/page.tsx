@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -19,6 +19,17 @@ function CollapsibleSection({ title, children, bgColor, borderColor, textColor }
 
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+
+  const fetchImages = async () => {
+    const res = await fetch('/api/images');
+    const data = await res.json();
+    setImages(data.images);
+  };
+
+  useEffect(() => {
+    fetchImages();
+  }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,16 +46,13 @@ export default function Home() {
     const data = await res.json();
     if (data.url) {
       setUploadedFile(data.url);
+      fetchImages();
     } else if (data.error) {
       alert(data.error);
     }
   };
 
-  const handleViewImage = () => {
-    if (uploadedFile) {
-      window.open(uploadedFile, '_blank');
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
@@ -70,17 +78,20 @@ export default function Home() {
             </button>
           </form>
 
-          {uploadedFile && (
+          {images.length > 0 && (
             <div className="mt-6">
-              <button
-                onClick={handleViewImage}
-                className="w-full bg-red-600 text-white py-4 px-6 rounded-lg hover:bg-red-700 transition text-xl font-semibold"
-              >
-                アップロードしたファイルを開く
-              </button>
-              <p className="text-base text-gray-500 mt-3 text-center">
-                ※ 新しいタブで開くとJavaScriptが実行されます
-              </p>
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">アップロード済み画像</h2>
+              <div className="grid grid-cols-3 gap-4">
+                {images.map((img) => (
+                  <button
+                    key={img}
+                    onClick={() => window.open(img, '_blank')}
+                    className="aspect-square bg-gray-100 rounded-lg hover:opacity-80 transition overflow-hidden"
+                  >
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 

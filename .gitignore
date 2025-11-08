@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# images
+public/uploads/*
+!public/uploads/ot376.png
+!public/uploads/ot376_1.png
+!public/uploads/ot376_2.png
+!public/uploads/ot376_3.png
