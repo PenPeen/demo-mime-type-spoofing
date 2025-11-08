@@ -2,6 +2,19 @@
 
 import { useState } from 'react';
 
+function CollapsibleSection({ title, children, bgColor, borderColor, textColor }: { title: string; children: React.ReactNode; bgColor: string; borderColor: string; textColor: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className={`mt-8 p-6 ${bgColor} border ${borderColor} rounded-lg`}>
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center">
+        <h3 className={`text-xl font-semibold ${textColor}`}>{title}</h3>
+        <span className={`text-2xl ${textColor}`}>{isOpen ? '▼' : '▶'}</span>
+      </button>
+      {isOpen && <div className="mt-4">{children}</div>}
+    </div>
+  );
+}
+
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
 
@@ -35,24 +48,24 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-xl p-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">画像アップロード</h1>
+          <h1 className="text-5xl font-bold text-gray-800 mb-6">画像アップロード</h1>
 
           <form onSubmit={handleUpload} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xl font-medium text-gray-700 mb-3">
                 画像を選択 (.jpg, .png のみ)
               </label>
               <input
                 type="file"
                 name="file"
                 accept=".jpg,.jpeg,.png"
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                className="block w-full text-lg text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-lg file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                 required
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition"
+              className="w-full bg-indigo-600 text-white py-4 px-6 rounded-lg hover:bg-indigo-700 transition text-xl font-semibold"
             >
               アップロード
             </button>
@@ -62,27 +75,25 @@ export default function Home() {
             <div className="mt-6">
               <button
                 onClick={handleViewImage}
-                className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition"
+                className="w-full bg-red-600 text-white py-4 px-6 rounded-lg hover:bg-red-700 transition text-xl font-semibold"
               >
                 🔗 アップロードしたファイルを開く
               </button>
-              <p className="text-xs text-gray-500 mt-2 text-center">
+              <p className="text-base text-gray-500 mt-3 text-center">
                 ※ 新しいタブで開くとJavaScriptが実行されます
               </p>
             </div>
           )}
 
-          <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h3 className="font-semibold text-blue-800 mb-2">ファイルの検証</h3>
-            <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
+          <CollapsibleSection title="ファイルの検証" bgColor="bg-blue-50" borderColor="border-blue-200" textColor="text-blue-800">
+            <ol className="text-lg text-blue-700 space-y-2 list-decimal list-inside">
               <li>フロントエンドは拡張子をチェック (image/jpeg, image/png)</li>
               <li>サーバーはContent-Typeを検証 (image/jpeg, image/png)</li>
             </ol>
-          </div>
+          </CollapsibleSection>
 
-          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 className="font-semibold text-yellow-800 mb-2">攻撃スクリプト</h3>
-            <pre className="text-xs text-yellow-700 overflow-x-auto bg-yellow-100 p-2 rounded">
+          <CollapsibleSection title="攻撃スクリプト" bgColor="bg-yellow-50" borderColor="border-yellow-200" textColor="text-yellow-800">
+            <pre className="text-sm text-yellow-700 overflow-x-auto bg-yellow-100 p-4 rounded">
               <code>{`// HTMLファイルを作成
 const html = '<!DOCTYPE html><html><body><h1>🚨 XSS</h1><script>alert("Attack!")</script></body></html>';
 
@@ -97,7 +108,7 @@ dt.items.add(file);
 const input = document.querySelector('input[type="file"]');
 input.files = dt.files;`}</code>
             </pre>
-          </div>
+          </CollapsibleSection>
         </div>
       </div>
     </div>
