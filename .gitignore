@@ -46,3 +46,8 @@ public/uploads/*
 !public/uploads/ot376_1.png
 !public/uploads/ot376_2.png
 !public/uploads/ot376_3.png
+public/compressed/*
+
+/app/generated/prisma
+prisma/dev.db
+prisma/dev.db-journal
