@@ -51,6 +51,8 @@ export default function Home() {
 
   useEffect(() => {
     fetchImages();
+    sessionStorage.setItem('userId', '12345');
+    sessionStorage.setItem('sessionToken', 'abc123xyz789');
   }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
