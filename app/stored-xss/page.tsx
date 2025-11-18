@@ -1,45 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import Script from 'next/script';
 
-function CodeBlock({ code, language }: { code: string; language: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-  return (
-    <div className="relative">
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10"
-      >
-        {copied ? '✓ コピー済み' : 'コピー'}
-      </button>
-      <SyntaxHighlighter language={language} style={vscDarkPlus} customStyle={{ fontSize: '0.875rem', borderRadius: '0.5rem' }}>
-        {code}
-      </SyntaxHighlighter>
-    </div>
-  );
-}
-
-function CollapsibleSection({ title, children, bgColor, borderColor, textColor }: { title: string; children: React.ReactNode; bgColor: string; borderColor: string; textColor: string }) {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div className={`mt-8 p-6 ${bgColor} border ${borderColor} rounded-lg`}>
-      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center">
-        <h3 className={`text-xl font-semibold ${textColor}`}>{title}</h3>
-        <span className={`text-2xl ${textColor}`}>{isOpen ? '▼' : '▶'}</span>
-      </button>
-      {isOpen && <div className="mt-4">{children}</div>}
-    </div>
-  );
-}
-
-export default function Home() {
+export default function StoredXSS() {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [images, setImages] = useState<string[]>([]);
 
@@ -50,9 +14,26 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // CSS読み込み
+    const link1 = document.createElement('link');
+    link1.rel = 'stylesheet';
+    link1.href = '/stored-xss/css/style.css';
+    document.head.appendChild(link1);
+
+    // lightbox CSS
+    const link2 = document.createElement('link');
+    link2.rel = 'stylesheet';
+    link2.href = 'https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.min.css';
+    document.head.appendChild(link2);
+
     fetchImages();
     sessionStorage.setItem('userId', '12345');
     sessionStorage.setItem('sessionToken', 'abc123xyz789');
+
+    return () => {
+      document.head.removeChild(link1);
+      document.head.removeChild(link2);
+    };
   }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -76,100 +57,180 @@ export default function Home() {
     }
   };
 
-
-
   return (
-    <div className="min-h-screen bg-orange-50">
-      <header className="relative text-white py-20 shadow-lg overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url(/Header.jpg)' }}
-        />
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="container mx-auto px-4 relative z-10">
-          <h1 className="text-3xl font-bold drop-shadow-lg">まったり犬写真館</h1>
-          <p className="text-base mt-1 drop-shadow-md">癒しのわんこ写真をみんなにシェアしよう</p>
-        </div>
-      </header>
+    <div className="home">
+      <div id="container">
+        <header>
+          <h1 id="logo">
+            <a href="/stored-xss">
+              <img src="/stored-xss/images/logo.png" alt="わんこ写真館" />
+            </a>
+          </h1>
+          {/* スライドショー */}
+          <aside id="mainimg">
+            <img src="/stored-xss/images/1.jpg" alt="" className="slide0" />
+            <img src="/stored-xss/images/1.jpg" alt="" className="slide1" />
+            <img src="/stored-xss/images/2.jpg" alt="" className="slide2" />
+            <img src="/stored-xss/images/3.jpg" alt="" className="slide3" />
+            <img src="/stored-xss/images/123_kazari.png" alt="" className="kazari" />
+          </aside>
+        </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <aside className="lg:w-80 space-y-4">
-            <div className="bg-white rounded-2xl shadow-md p-6 border-4 border-pink-200">
-              <h2 className="text-xl font-bold text-pink-600 mb-4">写真をアップロード</h2>
-              <form onSubmit={handleUpload} className="space-y-4">
-                <div>
-                  <input
-                    type="file"
-                    name="file"
-                    accept=".jpg,.jpeg,.png"
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-100 file:text-pink-700 hover:file:bg-pink-200"
-                    required
-                  />
-                </div>
+        {/* 開閉メニュー */}
+        <nav id="menubar">
+          <ul>
+            <li><a href="#upload">Upload</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#new">News</a></li>
+            <li><a href="#about">About</a></li>
+          </ul>
+        </nav>
+
+        <div id="contents">
+          {/* アップロードセクション */}
+          <section id="upload">
+            <h2>Upload Photo<br /><span>写真をアップロード</span></h2>
+
+            <div style={{
+              background: '#fff',
+              padding: '30px',
+              borderRadius: '10px',
+              marginBottom: '40px',
+              border: '2px solid #e0e0e0'
+            }}>
+              <h3 style={{ marginBottom: '20px', fontSize: '1.2em' }}>可愛いわんこの写真をシェアしよう</h3>
+              <form onSubmit={handleUpload} style={{ marginBottom: '20px' }}>
+                <input
+                  type="file"
+                  name="file"
+                  accept=".jpg,.jpeg,.png"
+                  style={{
+                    width: '100%',
+                    padding: '15px',
+                    marginBottom: '15px',
+                    border: '2px dashed #ccc',
+                    borderRadius: '5px',
+                    fontSize: '1em'
+                  }}
+                  required
+                />
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-pink-400 to-orange-400 text-white py-3 px-6 rounded-full hover:from-pink-500 hover:to-orange-500 transition font-bold shadow-lg"
+                  style={{
+                    width: '100%',
+                    padding: '15px',
+                    background: 'linear-gradient(to right, #ff7eb3, #ff758c)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '5px',
+                    fontSize: '1.1em',
+                    fontWeight: 'bold',
+                    cursor: 'pointer'
+                  }}
                 >
                   アップロード！
                 </button>
               </form>
-            </div>
-
-            <div className="bg-gradient-to-br from-pink-100 to-orange-100 rounded-2xl shadow-md p-6 border-4 border-pink-200">
-              <h3 className="font-bold text-pink-700 mb-2">🐾 このサイトについて</h3>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                みんなの可愛いわんこの写真を集めて癒されるサイトです。あなたの愛犬の写真もぜひシェアしてください！
+              <p style={{ fontSize: '0.9em', color: '#666' }}>
+                ※ 対応形式：JPEG、PNG
               </p>
             </div>
-          </aside>
+          </section>
 
-          <main className="flex-1">
-            <div className="bg-white rounded-2xl shadow-md p-6 mb-6 border-4 border-orange-200">
-              <h2 className="text-2xl font-bold text-orange-600 mb-1">みんなの可愛いわんこたち</h2>
-              <p className="text-sm text-gray-600 mb-4">クリックしたら画像が見れるよ！</p>
-              {images.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {images.map((img) => (
-                    <button
-                      key={img}
-                      onClick={() => window.open(img, '_blank')}
-                      className="aspect-square bg-pink-50 rounded-xl hover:scale-105 transition-transform overflow-hidden shadow-md border-2 border-pink-200"
-                    >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500 text-center py-8">まだ写真がありません。最初の1枚をアップロードしてね！</p>
-              )}
-            </div>
+          {/* ギャラリーセクション */}
+          <section id="gallery">
+            <h2>Gallery<br /><span>みんなの可愛いわんこたち</span></h2>
 
-            <CollapsibleSection title="アップロードファイルの検証" bgColor="bg-blue-50" borderColor="border-blue-300" textColor="text-blue-800">
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-lg font-semibold text-blue-800 mb-2">1. フロントエンド: 拡張子チェック</h4>
-                <CodeBlock language="html" code={`<input
+            {images.length > 0 ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '40px' }}>
+                {images.map((img, index) => (
+                  <div key={index} className="list">
+                    <a href={img} data-lightbox="group1" data-title="わんこの写真">
+                      <figure>
+                        <img
+                          src={img}
+                          alt={`わんこ ${index + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '200px',
+                            objectFit: 'cover',
+                            borderRadius: '10px'
+                          }}
+                        />
+                      </figure>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                まだ写真がありません。最初の1枚をアップロードしてね！
+              </p>
+            )}
+          </section>
+
+          {/* お知らせセクション */}
+          <section id="new">
+            <h2>News<br /><span>お知らせ</span></h2>
+            <dl>
+              <dt>2024/11/18</dt>
+              <dd>わんこ写真館がオープンしました！<span className="newicon">NEW</span></dd>
+              <dt>2024/11/18</dt>
+              <dd>みんなの可愛いわんこの写真を募集中です。ぜひアップロードしてください！</dd>
+              <dt>2024/11/18</dt>
+              <dd>写真をクリックすると大きな画像で見ることができます。</dd>
+            </dl>
+          </section>
+
+          {/* セキュリティ情報セクション */}
+          <section id="about">
+            <h2>Security Info<br /><span>セキュリティ情報（教育目的）</span></h2>
+
+            <h3>ファイル検証の仕組み</h3>
+
+            <h4>1. フロントエンド: 拡張子チェック</h4>
+            <pre style={{
+              background: '#f5f5f5',
+              padding: '15px',
+              borderRadius: '5px',
+              overflow: 'auto',
+              fontSize: '0.9em',
+              marginBottom: '20px'
+            }}>{`<input
   type="file"
   accept=".jpg,.jpeg,.png"
-/>`} />
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold text-blue-800 mb-2">2. サーバーサイド: Content-Type検証</h4>
-                <CodeBlock language="typescript" code={`const contentType = file.type;
+/>`}</pre>
+
+            <h4>2. サーバーサイド: Content-Type検証</h4>
+            <pre style={{
+              background: '#f5f5f5',
+              padding: '15px',
+              borderRadius: '5px',
+              overflow: 'auto',
+              fontSize: '0.9em',
+              marginBottom: '20px'
+            }}>{`const contentType = file.type;
 
 if (!['image/jpeg', 'image/png'].includes(contentType)) {
   return NextResponse.json(
     { error: '画像ファイルのみアップロード可能です' },
     { status: 400 }
   );
-}`} />
-              </div>
-            </div>
-          </CollapsibleSection>
+}`}</pre>
 
-            <CollapsibleSection title="攻撃スクリプト" bgColor="bg-yellow-50" borderColor="border-yellow-300" textColor="text-yellow-800">
-            <CodeBlock language="javascript" code={`// attack.htmlから読み込み
+            <h3 style={{ marginTop: '40px', color: '#d9534f' }}>【デモ】攻撃スクリプト</h3>
+            <p style={{ color: '#d9534f', fontWeight: 'bold' }}>※ これは教育目的のデモです ※</p>
+
+            <h4>Content-Typeを偽装してHTMLファイルをアップロード</h4>
+            <pre style={{
+              background: '#fff3cd',
+              padding: '15px',
+              borderRadius: '5px',
+              overflow: 'auto',
+              fontSize: '0.9em',
+              marginBottom: '20px',
+              border: '2px solid #ffc107'
+            }}>{`// attack.htmlから読み込み
 const response = await fetch('./attack.html');
 const html = await response.text();
 
@@ -182,11 +243,68 @@ const dt = new DataTransfer();
 dt.items.add(file);
 
 const input = document.querySelector('input[type="file"]');
-input.files = dt.files;`} />
-            </CollapsibleSection>
-          </main>
+input.files = dt.files;`}</pre>
+
+            <h3 style={{ marginTop: '40px' }}>脆弱性の詳細</h3>
+            <h4>問題点</h4>
+            <ul style={{ marginBottom: '20px' }}>
+              <li>Content-Typeはクライアント側で簡単に偽装可能</li>
+              <li>サーバー側でContent-Typeのみを検証している</li>
+              <li>実際のファイル内容を検証していない</li>
+              <li>HTMLファイルを画像として偽装してアップロード可能</li>
+              <li>アップロードしたファイルを開くとJavaScriptが実行される</li>
+            </ul>
+
+            <h4>対策</h4>
+            <ul>
+              <li>ファイルの実際の内容（マジックバイト）を検証する</li>
+              <li>画像処理ライブラリで画像として読み込めるか確認</li>
+              <li>アップロードされたファイルをContent-Type: text/htmlで配信しない</li>
+              <li>Content-Security-Policyヘッダーを設定</li>
+              <li>アップロードファイルを別ドメインで配信</li>
+            </ul>
+
+            <h3 style={{ marginTop: '40px' }}>sessionStorageのデータ</h3>
+            <p>このページでは、デモ用にsessionStorageに以下のデータを保存しています：</p>
+            <ul>
+              <li>userId: 12345</li>
+              <li>sessionToken: abc123xyz789</li>
+            </ul>
+            <p style={{ color: '#d9534f' }}>
+              攻撃が成功すると、これらのデータが盗まれる可能性があります。
+            </p>
+          </section>
         </div>
+
+        <footer>
+          <ul className="icon">
+            <li><a href="#"><img src="/stored-xss/images/icon_facebook.png" alt="Facebook" /></a></li>
+            <li><a href="#"><img src="/stored-xss/images/icon_twitter.png" alt="Twitter" /></a></li>
+            <li><a href="#"><img src="/stored-xss/images/icon_instagram.png" alt="Instagram" /></a></li>
+            <li><a href="#"><img src="/stored-xss/images/icon_youtube.png" alt="YouTube" /></a></li>
+          </ul>
+          <small>Copyright&copy; <a href="/stored-xss">わんこ写真館</a> All Rights Reserved.</small>
+          <span className="pr">
+            <a href="https://template-party.com/" target="_blank" rel="noopener noreferrer">
+              《Web Design:Template-Party》
+            </a>
+          </span>
+        </footer>
       </div>
+
+      <p className="nav-fix-pos-pagetop"><a href="#">↑</a></p>
+
+      {/* メニュー開閉ボタン */}
+      <div id="menubar_hdr"></div>
+
+      {/* Scripts */}
+      <Script src="/stored-xss/js/openclose.js" strategy="afterInteractive" onLoad={() => {
+        if (typeof (window as any).open_close === 'function') {
+          (window as any).open_close("menubar_hdr", "menubar");
+        }
+      }} />
+      <Script src="/stored-xss/js/fixmenu_pagetop.js" strategy="afterInteractive" />
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/js/lightbox-plus-jquery.min.js" strategy="afterInteractive" />
     </div>
   );
 }
