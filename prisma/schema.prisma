@@ -13,3 +13,10 @@ model RceFile {
   sanitizedName    String
   createdAt        DateTime @default(now())
 }
+
+model PathTraversalFile {
+  id               Int      @id @default(autoincrement())
+  originalName     String   @unique
+  sanitizedName    String
+  createdAt        DateTime @default(now())
+}

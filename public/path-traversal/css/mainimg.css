@@ -1,0 +1,29 @@
+@charset "utf-8";
+
+
+#mainimg {
+	position: relative;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	z-index: -1;
+}
+
+#mainimg video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center center;
+	opacity: 0;
+	transition: opacity 0.5s ease;	/*0.5sがフェードにかける時間*/
+	will-change: opacity;
+	z-index: 0;
+}
+
+#mainimg video.active {
+	opacity: 1;
+	z-index: 1;
+}
