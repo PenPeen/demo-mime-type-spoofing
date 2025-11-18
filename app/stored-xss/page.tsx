@@ -301,11 +301,7 @@ input.files = dt.files;`}</pre>
             <li><a href="#"><img src="/stored-xss/images/icon_youtube.png" alt="YouTube" /></a></li>
           </ul>
           <small>Copyright&copy; <a href="/stored-xss">わんこ写真館</a> All Rights Reserved.</small>
-          <span className="pr">
-            <a href="https://template-party.com/" target="_blank" rel="noopener noreferrer">
-              《Web Design:Template-Party》
-            </a>
-          </span>
+          <span className="pr"><a href="https://template-party.com/" target="_blank">《Web Design:Template-Party》</a></span>
         </footer>
       </div>
 
