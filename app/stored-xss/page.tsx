@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Script from 'next/script';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function StoredXSS() {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
@@ -207,53 +209,60 @@ export default function StoredXSS() {
 
           {/* セキュリティ情報セクション */}
           <section id="about">
-            <h2>Security Info<br /><span>セキュリティ情報（教育目的）</span></h2>
+            <h2>Security</h2>
 
-            <h3>ファイル検証の仕組み</h3>
+            <h3>ファイル検証</h3>
 
             <h4>1. フロントエンド: 拡張子チェック</h4>
-            <pre style={{
-              background: '#f5f5f5',
-              padding: '15px',
-              borderRadius: '5px',
-              overflow: 'auto',
-              fontSize: '0.9em',
-              marginBottom: '20px'
-            }}>{`<input
+            <SyntaxHighlighter
+              language="html"
+              style={vscDarkPlus}
+              customStyle={{
+                borderRadius: '5px',
+                fontSize: '0.9em',
+                marginBottom: '20px'
+              }}
+            >
+{`<input
   type="file"
   accept=".jpg,.jpeg,.png"
-/>`}</pre>
+/>`}
+            </SyntaxHighlighter>
 
             <h4>2. サーバーサイド: Content-Type検証</h4>
-            <pre style={{
-              background: '#f5f5f5',
-              padding: '15px',
-              borderRadius: '5px',
-              overflow: 'auto',
-              fontSize: '0.9em',
-              marginBottom: '20px'
-            }}>{`const contentType = file.type;
+            <SyntaxHighlighter
+              language="typescript"
+              style={vscDarkPlus}
+              customStyle={{
+                borderRadius: '5px',
+                fontSize: '0.9em',
+                marginBottom: '20px'
+              }}
+            >
+{`const contentType = file.type;
 
 if (!['image/jpeg', 'image/png'].includes(contentType)) {
   return NextResponse.json(
     { error: '画像ファイルのみアップロード可能です' },
     { status: 400 }
   );
-}`}</pre>
+}`}
+            </SyntaxHighlighter>
 
-            <h3 style={{ marginTop: '40px', color: '#d9534f' }}>【デモ】攻撃スクリプト</h3>
-            <p style={{ color: '#d9534f', fontWeight: 'bold' }}>※ これは教育目的のデモです ※</p>
+            <h3 style={{ marginTop: '40px', color: '#d9534f' }}>【デモ】攻撃用スクリプト</h3>
 
             <h4>Content-Typeを偽装してHTMLファイルをアップロード</h4>
-            <pre style={{
-              background: '#fff3cd',
-              padding: '15px',
-              borderRadius: '5px',
-              overflow: 'auto',
-              fontSize: '0.9em',
-              marginBottom: '20px',
-              border: '2px solid #ffc107'
-            }}>{`// attack.htmlから読み込み
+            <SyntaxHighlighter
+              language="javascript"
+              style={vscDarkPlus}
+              customStyle={{
+                borderRadius: '5px',
+                fontSize: '0.9em',
+                marginBottom: '20px',
+                border: '2px solid #ffc107'
+              }}
+            >
+{`// attack.htmlから読み込み
 const response = await fetch('./attack.html');
 const html = await response.text();
 
@@ -266,36 +275,8 @@ const dt = new DataTransfer();
 dt.items.add(file);
 
 const input = document.querySelector('input[type="file"]');
-input.files = dt.files;`}</pre>
-
-            <h3 style={{ marginTop: '40px' }}>脆弱性の詳細</h3>
-            <h4>問題点</h4>
-            <ul style={{ marginBottom: '20px' }}>
-              <li>Content-Typeはクライアント側で簡単に偽装可能</li>
-              <li>サーバー側でContent-Typeのみを検証している</li>
-              <li>実際のファイル内容を検証していない</li>
-              <li>HTMLファイルを画像として偽装してアップロード可能</li>
-              <li>アップロードしたファイルを開くとJavaScriptが実行される</li>
-            </ul>
-
-            <h4>対策</h4>
-            <ul>
-              <li>ファイルの実際の内容（マジックバイト）を検証する</li>
-              <li>画像処理ライブラリで画像として読み込めるか確認</li>
-              <li>アップロードされたファイルをContent-Type: text/htmlで配信しない</li>
-              <li>Content-Security-Policyヘッダーを設定</li>
-              <li>アップロードファイルを別ドメインで配信</li>
-            </ul>
-
-            <h3 style={{ marginTop: '40px' }}>sessionStorageのデータ</h3>
-            <p>このページでは、デモ用にsessionStorageに以下のデータを保存しています：</p>
-            <ul>
-              <li>userId: 12345</li>
-              <li>sessionToken: abc123xyz789</li>
-            </ul>
-            <p style={{ color: '#d9534f' }}>
-              攻撃が成功すると、これらのデータが盗まれる可能性があります。
-            </p>
+input.files = dt.files;`}
+            </SyntaxHighlighter>
           </section>
         </div>
 
