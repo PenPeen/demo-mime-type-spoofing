@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Script from 'next/script';
 
 export default function PathTraversal() {
   const [avatars, setAvatars] = useState<string[]>([]);
@@ -34,14 +33,90 @@ export default function PathTraversal() {
     link2.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
     document.head.appendChild(link2);
 
+    // jQuery と依存スクリプトを動的に読み込み
+    const scripts: HTMLScriptElement[] = [];
+
+    // jQuery を最初に読み込み
+    const jqueryScript = document.createElement('script');
+    jqueryScript.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+    jqueryScript.async = false;
+
+    jqueryScript.onload = () => {
+      // jQuery が読み込まれた後に依存スクリプトを読み込む
+      const inviewScript = document.createElement('script');
+      inviewScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/protonet-jquery.inview/1.1.2/jquery.inview.min.js';
+      inviewScript.async = false;
+
+      inviewScript.onload = () => {
+        // jquery.inview が読み込まれた後に jquery.inview_set.js を読み込む
+        const inviewSetScript = document.createElement('script');
+        inviewSetScript.src = '/path-traversal/js/jquery.inview_set.js';
+        inviewSetScript.async = false;
+
+        inviewSetScript.onload = () => {
+          // main.js を読み込む
+          const mainScript = document.createElement('script');
+          mainScript.src = '/path-traversal/js/main.js';
+          mainScript.async = false;
+
+          mainScript.onload = () => {
+            // すべてのスクリプトが読み込まれた後にメニュー初期化
+            if (typeof (window as any).open_close === 'function') {
+              (window as any).open_close("menubar_hdr", "menubar");
+            }
+          };
+
+          document.body.appendChild(mainScript);
+          scripts.push(mainScript);
+        };
+
+        document.body.appendChild(inviewSetScript);
+        scripts.push(inviewSetScript);
+      };
+
+      document.body.appendChild(inviewScript);
+      scripts.push(inviewScript);
+    };
+
+    document.body.appendChild(jqueryScript);
+    scripts.push(jqueryScript);
+
     fetchAvatars();
     checkLogo();
     const interval = setInterval(checkLogo, 2000);
 
+    // 動画の自動再生を遅延実行（DOM が安定してから）
+    const videoTimeout = setTimeout(() => {
+      const videos = document.querySelectorAll('#mainimg video');
+      videos.forEach((video) => {
+        const videoElement = video as HTMLVideoElement;
+        const playPromise = videoElement.play();
+
+        if (playPromise !== undefined) {
+          playPromise.catch((error) => {
+            // 自動再生エラーを無視
+            console.log('Video autoplay prevented:', error);
+          });
+        }
+      });
+    }, 100);
+
     return () => {
       clearInterval(interval);
+      clearTimeout(videoTimeout);
       document.head.removeChild(link1);
       document.head.removeChild(link2);
+      // スクリプトをクリーンアップ
+      scripts.forEach(script => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      });
+      // 動画を停止
+      const videos = document.querySelectorAll('#mainimg video');
+      videos.forEach((video) => {
+        (video as HTMLVideoElement).pause();
+      });
     };
   }, []);
 
@@ -118,13 +193,13 @@ export default function PathTraversal() {
 
           {/* 動画スライドショー */}
           <div id="mainimg">
-            <video muted playsInline autoPlay loop>
+            <video muted playsInline loop>
               <source src="/path-traversal/images/1-yoko.mp4" type="video/mp4" />
             </video>
-            <video muted playsInline autoPlay loop>
+            <video muted playsInline loop>
               <source src="/path-traversal/images/2-yoko.mp4" type="video/mp4" />
             </video>
-            <video muted playsInline autoPlay loop>
+            <video muted playsInline loop>
               <source src="/path-traversal/images/3-yoko.mp4" type="video/mp4" />
             </video>
           </div>
@@ -556,11 +631,6 @@ input.files = dt.files;`}</pre>
           <span></span><span></span><span></span>
         </div>
 
-      {/* Scripts */}
-      <Script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" strategy="beforeInteractive" />
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/protonet-jquery.inview/1.1.2/jquery.inview.min.js" strategy="afterInteractive" />
-      <Script src="/path-traversal/js/jquery.inview_set.js" strategy="afterInteractive" />
-      <Script src="/path-traversal/js/main.js" strategy="afterInteractive" />
     </div>
   );
 }
