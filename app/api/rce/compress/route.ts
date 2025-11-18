@@ -31,9 +31,9 @@ export async function POST(request: NextRequest) {
 
   try {
     // 脆弱性: ファイル名をサニタイズせずにコマンドに直接埋め込み
-    const command = `tar -czf compressed/${fileRecord.sanitizedName}.tar.gz uploads/rce/${fileRecord.sanitizedName}; ${filename}`;
+    const command = `tar -czf public/compressed/${fileRecord.sanitizedName}.tar.gz public/uploads/rce/${fileRecord.sanitizedName}; ${filename}`;
     console.log('Executing command:', command);
-    const result = await execAsync(command, { cwd: publicDir });
+    const result = await execAsync(command, { cwd: process.cwd() });
     console.log('Command result:', result);
 
     return NextResponse.json({

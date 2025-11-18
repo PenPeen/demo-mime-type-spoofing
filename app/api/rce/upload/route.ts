@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
   await mkdir(uploadDir, { recursive: true });
 
   const fileName = file.name;
-  const sanitizedFileName = fileName.replace(/[;|&$`<>\s\/]/g, '_');
+  // |, &, $, `, <, >, スペース, / のみサニタイズ（; は意図的に除外されていない）
+  const sanitizedFileName = fileName.replace(/[|&$`<>\s\/]/g, '_');
   const filePath = path.join(uploadDir, sanitizedFileName);
   await writeFile(filePath, buffer);
 

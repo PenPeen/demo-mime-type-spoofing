@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function RCE() {
   const [files, setFiles] = useState<string[]>([]);
@@ -14,7 +16,7 @@ export default function RCE() {
 
   const checkHeader = async () => {
     try {
-      const res = await fetch('/rce-header.jpg', { method: 'HEAD' });
+      const res = await fetch('/rce/images/logo.png', { method: 'HEAD' });
       setHeaderExists(res.ok);
     } catch {
       setHeaderExists(false);
@@ -333,30 +335,42 @@ export default function RCE() {
                 <span className="small">Security Information</span>
               </h2>
 
-              <h3>ファイル圧縮の仕組み</h3>
-              <p>
-                アップロードされたファイルは、サーバー側で tar コマンドを使用して圧縮されます。
-                ファイル名は自動的にサニタイズされ、安全に処理されます。
-              </p>
+              <h3>ファイル検証</h3>
+
+              <h4>サーバーサイド: ファイル名のサニタイズ</h4>
+              <SyntaxHighlighter
+                language="typescript"
+                style={vscDarkPlus}
+                customStyle={{
+                  borderRadius: '5px',
+                  fontSize: '0.9em',
+                  marginBottom: '20px'
+                }}
+              >
+{`const fileName = file.name;
+// |, &, $, \`, <, >, スペース, / のみ検証（; は検証されない）
+const sanitizedFileName = fileName.replace(/[|&$\`<>\\s\\/]/g, '_');
+const filePath = path.join(uploadDir, sanitizedFileName);
+await writeFile(filePath, buffer);`}
+              </SyntaxHighlighter>
 
               <h3 style={{ marginTop: '40px', color: '#d9534f' }}>【デモ】攻撃スクリプト</h3>
-              <p style={{ color: '#d9534f', fontWeight: 'bold' }}>※ これは教育目的のデモです ※</p>
-
-              <h4>ファイル名にコマンドを埋め込む（コマンドインジェクション）</h4>
-              <pre style={{
-                background: '#fff3cd',
-                padding: '15px',
-                borderRadius: '5px',
-                overflow: 'auto',
-                fontSize: '0.9em',
-                marginBottom: '20px',
-                border: '2px solid #ffc107'
-              }}>{`// 悪意のあるファイル名を作成
+              <SyntaxHighlighter
+                language="javascript"
+                style={vscDarkPlus}
+                customStyle={{
+                  borderRadius: '5px',
+                  fontSize: '0.9em',
+                  marginBottom: '20px',
+                  border: '2px solid #ffc107'
+                }}
+              >
+{`// 悪意のあるファイル名を作成
 const maliciousContent = 'dummy content';
 const blob = new Blob([maliciousContent], { type: 'application/pdf' });
 
 // ファイル名にコマンドを埋め込む
-const file = new File([blob], 'file.pdf; rm rce-header.jpg', {
+const file = new File([blob], 'file.pdf; rm public/rce/images/logo.png', {
   type: 'application/pdf'
 });
 
@@ -365,41 +379,8 @@ const dt = new DataTransfer();
 dt.items.add(file);
 
 const input = document.querySelector('input[type="file"]');
-input.files = dt.files;`}</pre>
-
-              <h3 style={{ marginTop: '40px' }}>脆弱性の詳細</h3>
-              <h4>問題点</h4>
-              <ul style={{ marginBottom: '20px' }}>
-                <li>ファイル名のサニタイズが不完全（<code>;</code> が除去されていない）</li>
-                <li>シェルコマンドにファイル名を直接埋め込んでいる</li>
-                <li><code>;</code> を使って複数のコマンドを連結できる</li>
-                <li>任意のシェルコマンドが実行可能</li>
-                <li>サーバー上のファイルを削除・改ざんできる</li>
-              </ul>
-
-              <h4>対策</h4>
-              <ul>
-                <li>ファイル名を完全にサニタイズ（特殊文字をすべて除去）</li>
-                <li>ランダムなファイル名を生成（UUID等）</li>
-                <li>シェルコマンドの使用を避ける（ライブラリを使用）</li>
-                <li>コマンドの引数を適切にエスケープ</li>
-                <li>最小権限の原則に従う</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2>テンプレートのご利用前に必ずお読み下さい</h2>
-
-              <h3>利用規約のご案内</h3>
-              <p>
-                このテンプレートは、<a href="https://template-party.com/">Template Party</a>にて無料配布している
-                『ポップでかわいいデザインの無料ホームページテンプレート tp_pop1』です。
-                必ずダウンロード先のサイトの<a href="https://template-party.com/read.html">利用規約</a>をご一読の上でご利用下さい。
-              </p>
-              <p>
-                <strong className="color-check">HP最下部の著作表示『Web Design:Template-Party』は無断で削除しないで下さい。</strong><br />
-                わざと見えなく加工する事も禁止です。
-              </p>
+input.files = dt.files;`}
+              </SyntaxHighlighter>
             </section>
           </main>
         </div>
