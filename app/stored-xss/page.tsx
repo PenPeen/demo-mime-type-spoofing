@@ -67,6 +67,24 @@ export default function StoredXSS() {
     }
   };
 
+  const handleReset = async () => {
+    if (!confirm('アップロードした画像をすべて削除し、デフォルト画像のみに戻しますか？')) {
+      return;
+    }
+
+    const res = await fetch('/api/stored-xss/reset', {
+      method: 'POST',
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert('リセット完了しました');
+      fetchImages();
+    } else {
+      alert('リセットに失敗しました');
+    }
+  };
+
   return (
     <div className="home">
       <div id="container">
@@ -93,6 +111,7 @@ export default function StoredXSS() {
             <li><a href="#gallery">Gallery</a></li>
             <li><a href="#new">News</a></li>
             <li><a href="#about">About</a></li>
+            <li><a href="#" onClick={(e) => { e.preventDefault(); handleReset(); }}>Reset</a></li>
           </ul>
         </nav>
 
