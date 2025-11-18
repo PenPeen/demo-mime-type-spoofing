@@ -11,7 +11,7 @@ export default function Home() {
 
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <Link href="/stored-xss" className="block bg-white rounded-lg shadow hover:shadow-xl transition p-6 border-l-4 border-red-500">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">蓄積型XSS</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">MIME Sniffing</h2>
             <p className="text-sm text-gray-600">Content-Type偽装によるHTMLアップロード攻撃</p>
           </Link>
 

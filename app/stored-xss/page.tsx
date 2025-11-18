@@ -20,12 +20,6 @@ export default function StoredXSS() {
     link1.href = '/stored-xss/css/style.css';
     document.head.appendChild(link1);
 
-    // lightbox CSS
-    const link2 = document.createElement('link');
-    link2.rel = 'stylesheet';
-    link2.href = 'https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.min.css';
-    document.head.appendChild(link2);
-
     // メニューを確実に閉じた状態にする
     const menubar = document.getElementById('menubar');
     const menubarHdr = document.getElementById('menubar_hdr');
@@ -42,7 +36,6 @@ export default function StoredXSS() {
 
     return () => {
       document.head.removeChild(link1);
-      document.head.removeChild(link2);
       // クリーンアップ時もメニューを閉じる
       if (menubar) {
         menubar.classList.add('close');
@@ -159,20 +152,14 @@ export default function StoredXSS() {
             <h2>Gallery<br /><span>みんなの可愛いわんこたち</span></h2>
 
             {images.length > 0 ? (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '40px' }}>
+              <div>
                 {images.map((img, index) => (
                   <div key={index} className="list">
-                    <a href={img} data-lightbox="group1" data-title="わんこの写真">
+                    <a href={img} target="_blank">
                       <figure>
                         <img
                           src={img}
                           alt={`わんこ ${index + 1}`}
-                          style={{
-                            width: '100%',
-                            height: '200px',
-                            objectFit: 'cover',
-                            borderRadius: '10px'
-                          }}
                         />
                       </figure>
                     </a>
@@ -195,7 +182,7 @@ export default function StoredXSS() {
               <dt>2024/11/18</dt>
               <dd>みんなの可愛いわんこの写真を募集中です。ぜひアップロードしてください！</dd>
               <dt>2024/11/18</dt>
-              <dd>写真をクリックすると大きな画像で見ることができます。</dd>
+              <dd>写真をクリックすると新しいタブで開きます。</dd>
             </dl>
           </section>
 
@@ -317,7 +304,6 @@ input.files = dt.files;`}</pre>
         }
       }} />
       <Script src="/stored-xss/js/fixmenu_pagetop.js" strategy="afterInteractive" />
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/js/lightbox-plus-jquery.min.js" strategy="afterInteractive" />
     </div>
   );
 }
