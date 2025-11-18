@@ -26,6 +26,16 @@ export default function StoredXSS() {
     link2.href = 'https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.min.css';
     document.head.appendChild(link2);
 
+    // メニューを確実に閉じた状態にする
+    const menubar = document.getElementById('menubar');
+    const menubarHdr = document.getElementById('menubar_hdr');
+    if (menubar) {
+      menubar.classList.add('close');
+    }
+    if (menubarHdr) {
+      menubarHdr.classList.remove('open');
+    }
+
     fetchImages();
     sessionStorage.setItem('userId', '12345');
     sessionStorage.setItem('sessionToken', 'abc123xyz789');
@@ -33,6 +43,13 @@ export default function StoredXSS() {
     return () => {
       document.head.removeChild(link1);
       document.head.removeChild(link2);
+      // クリーンアップ時もメニューを閉じる
+      if (menubar) {
+        menubar.classList.add('close');
+      }
+      if (menubarHdr) {
+        menubarHdr.classList.remove('open');
+      }
     };
   }, []);
 
