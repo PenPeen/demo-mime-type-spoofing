@@ -613,12 +613,11 @@ input.files = dt.files;`}</pre>
             </div>
           </footer>
 
-          {/* テンプレート著作 */}
-          <span className="pr">
-            <a href="https://template-party.com/" target="_blank" rel="noopener noreferrer">
-              《Web Design:Template-Party》
-            </a>
-          </span>
+
+
+          {/* 以下の行はテンプレートの著作。削除しないで下さい。 */}
+          <span className="pr"><a href="https://template-party.com/" target="_blank">《Web Design:Template-Party》</a></span>
+
         </div>
 
         {/* ページの上部へ戻るボタン */}

@@ -442,11 +442,7 @@ input.files = dt.files;`}</pre>
 
           <div id="copyright">
             Copyright&copy; <a href="/rce">ファイル圧縮システム</a> All Rights Reserved.
-            <span className="pr">
-              <a href="https://template-party.com/" target="_blank" rel="noopener noreferrer">
-                《Web Design:Template-Party》
-              </a>
-            </span>
+            <span className="pr"><a href="https://template-party.com/" target="_blank">《Web Design:Template-Party》</a></span>
           </div>
         </footer>
       </div>
