@@ -183,6 +183,20 @@ export default function RCE() {
     }
   };
 
+  const handleReset = async () => {
+    if (!confirm('全てのアップロード済みファイルとデータベースをリセットしますか？')) {
+      return;
+    }
+    const res = await fetch('/api/rce/reset', { method: 'POST' });
+    const data = await res.json();
+    if (data.message) {
+      alert('リセットしました');
+      window.location.reload();
+    } else {
+      alert('リセットに失敗しました');
+    }
+  };
+
   return (
     <div className="home">
       <div id="container">
@@ -190,7 +204,7 @@ export default function RCE() {
         <header>
           <h1 className="logo">
             <a href="/rce">
-              <img src="/rce/images/logo.png" alt="ファイル圧縮システム" />
+              <img src="/rce/images/logo.png" alt="" />
             </a>
           </h1>
 
@@ -322,7 +336,7 @@ export default function RCE() {
                   ))}
                 </div>
               ) : (
-                <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                <p style={{ textAlign: 'center', padding: '40px', color: '#FFF' }}>
                   まだファイルがアップロードされていません。
                 </p>
               )}
@@ -389,7 +403,7 @@ input.files = dt.files;`}
         <footer>
           <div>
             <p className="logo">
-              <img src="/rce/images/logo_inverse.png" alt="ファイル圧縮システム" />
+              <img src="/rce/images/logo_inverse.png" alt="" />
             </p>
           </div>
 
@@ -438,7 +452,7 @@ input.files = dt.files;`}
       {/* 開閉ブロック */}
       <div id="menubar">
         <p className="logo">
-          <img src="/rce/images/logo.png" alt="ファイル圧縮システム" />
+          <img src="/rce/images/logo.png"/>
         </p>
 
         <nav>
@@ -446,6 +460,11 @@ input.files = dt.files;`}
             <li><a href="#upload">アップロード</a></li>
             <li><a href="#files">ファイル一覧</a></li>
             <li><a href="#security">セキュリティ情報</a></li>
+            <li>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleReset(); }}>
+                リセット
+              </a>
+            </li>
           </ul>
         </nav>
 
