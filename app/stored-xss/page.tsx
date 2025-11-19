@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Script from 'next/script';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import toast from 'react-hot-toast';
 
 export default function StoredXSS() {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
@@ -64,8 +65,9 @@ export default function StoredXSS() {
     if (data.url) {
       setUploadedFile(data.url);
       fetchImages();
+      toast.success('画像のアップロードが完了しました！');
     } else if (data.error) {
-      alert(data.error);
+      toast.error(data.error);
     }
   };
 
@@ -80,10 +82,10 @@ export default function StoredXSS() {
 
     const data = await res.json();
     if (data.success) {
-      alert('リセット完了しました');
+      toast.success('リセット完了しました');
       fetchImages();
     } else {
-      alert('リセットに失敗しました');
+      toast.error('リセットに失敗しました');
     }
   };
 
