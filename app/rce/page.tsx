@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import toast from 'react-hot-toast';
 
 export default function RCE() {
   const [files, setFiles] = useState<string[]>([]);
@@ -151,8 +152,8 @@ export default function RCE() {
     }
     const data = await res.json();
     if (data.filename) {
-      alert('アップロード成功！');
-      fetchFiles();
+      await fetchFiles();
+      toast.success('アップロード成功！');
       form.reset();
     } else if (data.error) {
       alert(data.error);
@@ -322,7 +323,7 @@ export default function RCE() {
               {files.length > 0 ? (
                 <div className="list-grid1">
                   {files.map((file) => (
-                    <div key={file} className="list blur">
+                    <div key={file} className="list blur blurstyle">
                       <div className="text">
                         <h4 style={{ wordBreak: 'break-all' }}>{file}</h4>
                         <p>このファイルを tar.gz 形式で圧縮してダウンロードできます。</p>
