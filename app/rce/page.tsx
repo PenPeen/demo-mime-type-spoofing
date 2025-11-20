@@ -205,7 +205,7 @@ export default function RCE() {
         <header>
           <h1 className="logo">
             <a href="/rce">
-              <img src="/rce/images/logo.png" alt="" />
+              <img src="/rce/images/logo.png" alt="header" />
             </a>
           </h1>
 
